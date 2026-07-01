@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nature &amp; Animals Study</title>
+    <!-- style.css will be added later, when we build the two visual versions -->
+  </head>
+  <body>
+    <!-- The study flow will fill this container. Empty for now. -->
+    <div id="app"></div>
+
+    <!-- ───────────────────────────────────────────────────────────── -->
+    <!-- TEMPORARY data-layer test. Delete this whole block once study.js -->
+    <!-- is built. It confirms the split-file structure can create, update, -->
+    <!-- and answer against Supabase.                                       -->
+    <!-- ───────────────────────────────────────────────────────────── -->
+    <div
+      id="test-panel"
+      style="
+        font-family: system-ui, sans-serif;
+        max-width: 640px;
+        margin: 40px auto;
+        padding: 0 16px;
+        line-height: 1.5;
+      "
+    >
+      <h2 style="font-size: 1.2rem">Data-layer test (temporary)</h2>
+      <p>
+        Confirms the four files load and that create / update / insert-answer
+        all work. Delete the test rows from your Supabase Table Editor
+        afterwards.
+      </p>
+      <button
+        id="btnTest"
+        style="padding: 10px 16px; font-size: 1rem; cursor: pointer"
+      >
+        Run data-layer test
+      </button>
+      <div
+        id="testLog"
+        style="
+          background: #111;
+          color: #0f0;
+          font-family: monospace;
+          font-size: 0.85rem;
+          padding: 12px;
+          border-radius: 6px;
+          margin-top: 16px;
+          white-space: pre-wrap;
+          min-height: 120px;
+        "
+      >
+        Ready.
+      </div>
+    </div>
+
+    <!-- Scripts load in order. Plain globals (no modules) so opening the file -->
+    <!-- directly in a browser works without a server.                         -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="questions.js"></script>
+    <script src="db.js"></script>
+    <!-- <script src="study.js"></script>   ← the flow controller, added next -->
+
+    <!-- TEMPORARY test script — remove with the test-panel block above -->
+    <script>
+      const tlog = (m) => {
+        document.getElementById("testLog").textContent += "\n" + m;
+      };
+      document.getElementById("btnTest").onclick = async () => {
+        document.getElementById("testLog").textContent = "Running…";
+        tlog("Questions loaded: " + QUESTIONS.length + " (expected 30)");
+
+        const id = await createParticipant({
+          group_assignment: "A",
+          status: "eligible",
+        });
+        if (!id) {
+          tlog("❌ createParticipant failed — see browser console (F12)");
+          return;
+        }
+        tlog("✅ participant created: " + id);
+
+        const updated = await updateParticipant(id, {
+          status: "in-quiz",
+          last_reached_phase: "quiz",
+          last_reached_question: 1,
+        });
+        tlog(
+          updated ? "✅ participant updated" : "❌ update failed — see console",
+        );
+
+        const answered = await insertAnswer(id, {
+          question_id: 1,
+          selected_answer: "Greenland shark",
+          is_correct: true,
+          response_time_ms: 2500,
+        });
+        tlog(
+          answered ? "✅ answer inserted" : "❌ answer failed — see console",
+        );
+
+        tlog("Done. Check the Table Editor, then delete the test rows.");
+      };
+    </script>
+  </body>
+</html>
