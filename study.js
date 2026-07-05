@@ -4,6 +4,10 @@
 
 const app = document.getElementById("app");
 
+// TESTING TIP: set LEARNING_SECONDS to a small number (e.g. 5) to test quickly,
+// then restore it to 180 (3 minutes) before launch.
+const LEARNING_SECONDS = 180;
+
 // In-memory state for this session. Fields are filled as phases progress.
 const state = {
   participantId: null,
@@ -13,6 +17,7 @@ const state = {
   knownCount: null,
   knownIds: [],
   selectedIds: [],    // the 20 questions this participant will get
+  _learnInterval: null,
 };
 
 function render(html) { app.innerHTML = html; }
@@ -25,6 +30,17 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+// Look up the participant's selected questions, in their selected order.
+function getSelectedQuestions() {
+  return state.selectedIds.map(id => QUESTIONS.find(q => q.id === id)).filter(Boolean);
+}
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return m + ":" + String(s).padStart(2, "0");
 }
 
 // Detect browser + device type automatically (no personal data).
@@ -231,14 +247,73 @@ async function handleScreeningSubmit() {
     last_reached_phase: "learning"
   });
 
-  // Temporary placeholder — the Learning phase is built next.
+  showLearning();
+}
+
+// ── PHASE 2: Learning (time-limited, forced 3 minutes) ──
+async function showLearning() {
+  const qs = getSelectedQuestions();
+
+  const itemsHtml = qs.map((q, i) => `
+    <div class="learn-item">
+      <p class="learn-q"><strong>${i + 1}. ${q.text}</strong></p>
+      <p class="learn-a">Answer: <strong>${q.correct}</strong></p>
+      <p class="learn-e">${q.explanation}</p>
+    </div>
+  `).join("");
+
+  render(`
+    <div class="screen learning" data-group="${state.group}">
+      <div class="learn-timerbar">
+        <span>Learning time remaining</span>
+        <span id="learnTimer" class="learn-timer">${formatTime(LEARNING_SECONDS)}</span>
+      </div>
+      <h2>Learning phase</h2>
+      <p>Take the next few minutes to read and learn these facts — you will be tested on
+         them next. The quiz starts automatically when the time is up.</p>
+      <div class="learn-list">${itemsHtml}</div>
+    </div>
+  `);
+
+  // Mark that they reached the learning screen (incremental log).
+  updateParticipant(state.participantId, { learning_entered: true });
+
+  // Countdown from a fixed end time (robust to tab throttling).
+  const endAt = Date.now() + LEARNING_SECONDS * 1000;
+  const timerEl = document.getElementById("learnTimer");
+  const tick = () => {
+    const remaining = Math.max(0, Math.round((endAt - Date.now()) / 1000));
+    if (timerEl) timerEl.textContent = formatTime(remaining);
+    if (remaining <= 0) {
+      clearInterval(state._learnInterval);
+      finishLearning();
+    }
+  };
+  state._learnInterval = setInterval(tick, 250);
+  tick();
+}
+
+async function finishLearning() {
+  await updateParticipant(state.participantId, {
+    learning_entered: true,
+    learning_time_spent: LEARNING_SECONDS,
+    status: "in-quiz",
+    last_reached_phase: "quiz",
+    last_reached_question: 0
+  });
+  showQuiz();
+}
+
+// ── PHASE 3: Quiz (placeholder — built next) ──
+function showQuiz() {
+  const qs = getSelectedQuestions();
   render(`
     <div class="screen">
-      <h2>Screening complete ✅</h2>
-      <p>You marked <strong>${state.knownCount}</strong> as already known — eligible to continue.</p>
-      <p>20 questions were selected from your unknown pool.</p>
-      <p style="font-family:monospace;font-size:0.8rem;color:#888;">selected ids: ${selected.join(", ")}</p>
-      <p>(The Learning phase is built next.)</p>
+      <h2>Learning time is up ✅</h2>
+      <p>The quiz would begin now, with ${qs.length} questions.</p>
+      <p style="font-family:monospace;font-size:0.8rem;color:#888;">group: ${state.group} ·
+         participant: ${state.participantId}</p>
+      <p>(The Quiz phase is built next.)</p>
     </div>
   `);
 }
@@ -258,5 +333,3 @@ function showExcluded(reason) {
 
 // ── Start the flow ──
 showConsent();
-
-

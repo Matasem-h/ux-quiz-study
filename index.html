@@ -1,87 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nature &amp; Animals Study</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nature &amp; Animals Study</title>
 
-    <!-- TEMPORARY neutral base styling, just so the phases are readable while we -->
-    <!-- build the logic. This gets replaced by style.css (the two skins) later.  -->
-    <style>
-      body {
-        font-family: system-ui, sans-serif;
-        line-height: 1.55;
-        color: #1a1a1a;
-        max-width: 660px;
-        margin: 40px auto;
-        padding: 0 20px;
-      }
-      .screen h1 {
-        font-size: 1.4rem;
-      }
-      .screen h2 {
-        font-size: 1.25rem;
-      }
-      .screen h3 {
-        font-size: 1rem;
-        margin-bottom: 4px;
-      }
-      button {
-        padding: 10px 18px;
-        font-size: 1rem;
-        cursor: pointer;
-        margin-top: 8px;
-      }
-      button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-      .age-options {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
+  <!-- TEMPORARY neutral base styling, just so the phases are readable while we -->
+  <!-- build the logic. This gets replaced by style.css (the two skins) later.  -->
+  <style>
+    body { font-family: system-ui, sans-serif; line-height: 1.55; color: #1a1a1a;
+           max-width: 660px; margin: 40px auto; padding: 0 20px; }
+    .screen h1 { font-size: 1.4rem; }
+    .screen h2 { font-size: 1.25rem; }
+    .screen h3 { font-size: 1rem; margin-bottom: 4px; }
+    button { padding: 10px 18px; font-size: 1rem; cursor: pointer; margin-top: 8px; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .age-options { display: flex; gap: 10px; flex-wrap: wrap; }
 
-      /* screening list */
-      .screen-q {
-        margin: 0 0 16px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #eee;
-      }
-      .q-text {
-        margin: 0 0 6px;
-      }
-      .q-opts {
-        margin: 0 0 8px;
-        padding-left: 20px;
-        color: #555;
-        font-size: 0.92rem;
-      }
-      .q-opts li {
-        margin: 1px 0;
-      }
-      .known-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.95rem;
-        cursor: pointer;
-      }
-      #screeningSubmit {
-        margin-top: 16px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- The study flow renders here. -->
-    <div id="app"></div>
+    /* screening list */
+    .screen-q { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+    .q-text { margin: 0 0 6px; }
+    .q-opts { margin: 0 0 8px; padding-left: 20px; color: #555; font-size: 0.92rem; }
+    .q-opts li { margin: 1px 0; }
+    .known-label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; cursor: pointer; }
+    #screeningSubmit { margin-top: 16px; }
 
-    <!-- Scripts load in order. Plain globals (no modules) so opening the file -->
-    <!-- directly in a browser works without a server. -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
-    <script src="questions.js"></script>
-    <script src="db.js"></script>
-    <script src="study.js"></script>
-  </body>
+    /* learning phase */
+    .learn-timerbar { position: sticky; top: 0; background: #fff; padding: 12px 0;
+                      margin-bottom: 8px; border-bottom: 2px solid #333;
+                      display: flex; justify-content: space-between; align-items: baseline;
+                      font-weight: bold; }
+    .learn-timer { font-variant-numeric: tabular-nums; font-size: 1.2rem; }
+    .learn-item { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+    .learn-q { margin: 0 0 4px; }
+    .learn-a { margin: 0 0 4px; }
+    .learn-e { margin: 0; color: #555; }
+  </style>
+</head>
+<body>
+
+  <!-- The study flow renders here. -->
+  <div id="app"></div>
+
+  <!-- Scripts load in order. Plain globals (no modules) so opening the file -->
+  <!-- directly in a browser works without a server. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="questions.js"></script>
+  <script src="db.js"></script>
+  <script src="study.js"></script>
+
+</body>
 </html>
