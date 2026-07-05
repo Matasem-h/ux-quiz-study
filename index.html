@@ -1,108 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nature &amp; Animals Study</title>
-    <!-- style.css will be added later, when we build the two visual versions -->
-  </head>
-  <body>
-    <!-- The study flow will fill this container. Empty for now. -->
-    <div id="app"></div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nature &amp; Animals Study</title>
 
-    <!-- ───────────────────────────────────────────────────────────── -->
-    <!-- TEMPORARY data-layer test. Delete this whole block once study.js -->
-    <!-- is built. It confirms the split-file structure can create, update, -->
-    <!-- and answer against Supabase.                                       -->
-    <!-- ───────────────────────────────────────────────────────────── -->
-    <div
-      id="test-panel"
-      style="
-        font-family: system-ui, sans-serif;
-        max-width: 640px;
-        margin: 40px auto;
-        padding: 0 16px;
-        line-height: 1.5;
-      "
-    >
-      <h2 style="font-size: 1.2rem">Data-layer test (temporary)</h2>
-      <p>
-        Confirms the four files load and that create / update / insert-answer
-        all work. Delete the test rows from your Supabase Table Editor
-        afterwards.
-      </p>
-      <button
-        id="btnTest"
-        style="padding: 10px 16px; font-size: 1rem; cursor: pointer"
-      >
-        Run data-layer test
-      </button>
-      <div
-        id="testLog"
-        style="
-          background: #111;
-          color: #0f0;
-          font-family: monospace;
-          font-size: 0.85rem;
-          padding: 12px;
-          border-radius: 6px;
-          margin-top: 16px;
-          white-space: pre-wrap;
-          min-height: 120px;
-        "
-      >
-        Ready.
-      </div>
-    </div>
+  <!-- TEMPORARY neutral base styling, just so the phases are readable while we -->
+  <!-- build the logic. This gets replaced by style.css (the two skins) later.  -->
+  <style>
+    body { font-family: system-ui, sans-serif; line-height: 1.55; color: #1a1a1a;
+           max-width: 660px; margin: 40px auto; padding: 0 20px; }
+    .screen h1 { font-size: 1.4rem; }
+    .screen h2 { font-size: 1.25rem; }
+    .screen h3 { font-size: 1rem; margin-bottom: 4px; }
+    button { padding: 10px 18px; font-size: 1rem; cursor: pointer; margin-top: 8px; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .age-options { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    <!-- Scripts load in order. Plain globals (no modules) so opening the file -->
-    <!-- directly in a browser works without a server.                         -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
-    <script src="questions.js"></script>
-    <script src="db.js"></script>
-    <!-- <script src="study.js"></script>   ← the flow controller, added next -->
+    /* screening list */
+    .screen-q { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+    .q-text { margin: 0 0 6px; }
+    .q-opts { margin: 0 0 8px; padding-left: 20px; color: #555; font-size: 0.92rem; }
+    .q-opts li { margin: 1px 0; }
+    .known-label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; cursor: pointer; }
+    #screeningSubmit { margin-top: 16px; }
+  </style>
+</head>
+<body>
 
-    <!-- TEMPORARY test script — remove with the test-panel block above -->
-    <script>
-      const tlog = (m) => {
-        document.getElementById("testLog").textContent += "\n" + m;
-      };
-      document.getElementById("btnTest").onclick = async () => {
-        document.getElementById("testLog").textContent = "Running…";
-        tlog("Questions loaded: " + QUESTIONS.length + " (expected 30)");
+  <!-- The study flow renders here. -->
+  <div id="app"></div>
 
-        const id = await createParticipant({
-          group_assignment: "A",
-          status: "eligible",
-        });
-        if (!id) {
-          tlog("❌ createParticipant failed — see browser console (F12)");
-          return;
-        }
-        tlog("✅ participant created: " + id);
+  <!-- Scripts load in order. Plain globals (no modules) so opening the file -->
+  <!-- directly in a browser works without a server. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="questions.js"></script>
+  <script src="db.js"></script>
+  <script src="study.js"></script>
 
-        const updated = await updateParticipant(id, {
-          status: "in-quiz",
-          last_reached_phase: "quiz",
-          last_reached_question: 1,
-        });
-        tlog(
-          updated ? "✅ participant updated" : "❌ update failed — see console",
-        );
-
-        const answered = await insertAnswer(id, {
-          question_id: 1,
-          selected_answer: "Greenland shark",
-          is_correct: true,
-          response_time_ms: 2500,
-        });
-        tlog(
-          answered ? "✅ answer inserted" : "❌ answer failed — see console",
-        );
-
-        tlog("Done. Check the Table Editor, then delete the test rows.");
-      };
-    </script>
-  </body>
+</body>
 </html>
