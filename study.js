@@ -250,15 +250,22 @@ async function handleScreeningSubmit() {
   showLearning();
 }
 
-// ── PHASE 2: Learning (time-limited, forced 3 minutes) ──
+// ── PHASE 2: Learning (interactive, time-limited, forced 3 minutes) ──
+// Each item: pick an option, press "Check answer", then the correct answer and
+// explanation are revealed inline. Retrieval practice (answer-before-feedback).
 async function showLearning() {
   const qs = getSelectedQuestions();
+  const byId = {};
+  qs.forEach(q => { byId[q.id] = q; });
 
   const itemsHtml = qs.map((q, i) => `
-    <div class="learn-item">
+    <div class="learn-item" data-qid="${q.id}">
       <p class="learn-q"><strong>${i + 1}. ${q.text}</strong></p>
-      <p class="learn-a">Answer: <strong>${q.correct}</strong></p>
-      <p class="learn-e">${q.explanation}</p>
+      <div class="learn-opts">
+        ${q.options.map((o, idx) => `<button class="learn-opt" data-idx="${idx}">${o}</button>`).join("")}
+      </div>
+      <button class="learn-check" disabled>Check answer</button>
+      <div class="learn-reveal" hidden></div>
     </div>
   `).join("");
 
@@ -269,14 +276,59 @@ async function showLearning() {
         <span id="learnTimer" class="learn-timer">${formatTime(LEARNING_SECONDS)}</span>
       </div>
       <h2>Learning phase</h2>
-      <p>Take the next few minutes to read and learn these facts — you will be tested on
-         them next. The quiz starts automatically when the time is up.</p>
+      <p>For each question, choose the answer you think is correct, then press
+         <em>Check answer</em> to see the correct answer and a short explanation.
+         Try to answer before checking &mdash; it helps you remember. The quiz starts
+         automatically when the time is up.</p>
       <div class="learn-list">${itemsHtml}</div>
     </div>
   `);
 
   // Mark that they reached the learning screen (incremental log).
   updateParticipant(state.participantId, { learning_entered: true });
+
+  // One delegated click handler for all items.
+  const list = document.querySelector(".learn-list");
+  list.addEventListener("click", (e) => {
+    const optBtn = e.target.closest(".learn-opt");
+    const checkBtn = e.target.closest(".learn-check");
+
+    if (optBtn) {
+      const item = optBtn.closest(".learn-item");
+      if (item.classList.contains("checked")) return;      // already answered → locked
+      item.querySelectorAll(".learn-opt").forEach(b => b.classList.remove("selected"));
+      optBtn.classList.add("selected");
+      item.querySelector(".learn-check").disabled = false;  // enable Check once an option is picked
+      return;
+    }
+
+    if (checkBtn) {
+      const item = checkBtn.closest(".learn-item");
+      if (item.classList.contains("checked")) return;
+      const selected = item.querySelector(".learn-opt.selected");
+      if (!selected) return;
+
+      const q = byId[parseInt(item.dataset.qid, 10)];
+      const chosen = q.options[parseInt(selected.dataset.idx, 10)];
+      const isCorrect = (chosen === q.correct);
+
+      // Lock and colour the options.
+      item.querySelectorAll(".learn-opt").forEach((b, idx) => {
+        if (q.options[idx] === q.correct) b.classList.add("is-correct");
+        else if (b === selected) b.classList.add("is-wrong");
+        b.disabled = true;
+      });
+
+      const reveal = item.querySelector(".learn-reveal");
+      reveal.innerHTML = `
+        <p class="reveal-status">${isCorrect ? "Correct!" : "Not quite."}
+           The answer is <strong>${q.correct}</strong>.</p>
+        <p class="reveal-exp">${q.explanation}</p>`;
+      reveal.hidden = false;
+      checkBtn.disabled = true;
+      item.classList.add("checked");
+    }
+  });
 
   // Countdown from a fixed end time (robust to tab throttling).
   const endAt = Date.now() + LEARNING_SECONDS * 1000;
