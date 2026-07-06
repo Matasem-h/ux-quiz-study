@@ -6,7 +6,7 @@ const app = document.getElementById("app");
 
 // TESTING TIP: set LEARNING_SECONDS to a small number (e.g. 5) to test quickly,
 // then restore it to 180 (3 minutes) before launch.
-const LEARNING_SECONDS = 180;
+const LEARNING_SECONDS = 10;
 
 // In-memory state for this session. Fields are filled as phases progress.
 const state = {
@@ -167,11 +167,7 @@ async function handleAge(band) {
 
   render(`<div class="screen"><p>Setting up your session…</p></div>`);
 
-  const group = await assignGroup();
-  state.group = group;
-
   const id = await createParticipant({
-    group_assignment: group,
     age_band: band,
     age_eligible: true,
     consent_given: true,
@@ -241,12 +237,17 @@ async function handleScreeningSubmit() {
     return;
   }
 
-  // Eligible: randomly pick 20 from the unknown pool.
+  // Eligible: assign the group now (only fully-eligible participants get a group),
+  // then randomly pick 20 from the unknown pool.
+  const group = await assignGroup();
+  state.group = group;
+
   const unknownIds = QUESTIONS.map(q => q.id).filter(id => !checked.includes(id));
   const selected = shuffle(unknownIds).slice(0, 20);
   state.selectedIds = selected;
 
   await updateParticipant(state.participantId, {
+    group_assignment: group,
     known_count: state.knownCount,
     known_question_ids: checked,
     eligible_after_screening: true,
@@ -396,7 +397,7 @@ function renderQuizQuestion() {
       </div>
       <button id="quizNext" disabled>${isLast ? "Finish" : "Next"}</button>
     </div>
-  `);
+  `, state.group);
 
   // Start the response-time clock for this question.
   state._quizStart = performance.now();

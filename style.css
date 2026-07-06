@@ -1,209 +1,184 @@
 /* =========================================================================
-   style.css — three visual layers:
-     1. NEUTRAL base   → consent, age, screening, excluded, thank-you (shared)
-     2. GROUP A skin   → learning + quiz, enhanced modern UI (blue #407AFC)
-     3. GROUP B skin   → learning + quiz, deliberately bare / unstyled
-   The active group is set on <body data-group="A|B"> by study.js.
+   style.css
+     1. NEUTRAL base  → consent, age, screening, excluded, thank-you (shared)
+     2. GROUP A skin  → learning + quiz, polished modern UI (blue #407AFC)
+     3. GROUP B skin  → learning + quiz, deliberately bare / unstyled
+   Active group is set on <body data-group="A|B"> by study.js.
    ========================================================================= */
 
-/* ---------- reset ---------- */
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0;
-  background: #ffffff;
-  color: #262A33;
+  margin: 0; background: #ffffff; color: #1E2430;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
+  line-height: 1.55; -webkit-font-smoothing: antialiased;
 }
 
-/* =========================================================================
-   1. NEUTRAL base  (used when body has no data-group)
-   ========================================================================= */
-.screen { max-width: 660px; margin: 40px auto; padding: 0 20px; }
-.screen h1 { font-size: 1.5rem; margin: 0 0 12px; }
+/* ============================ 1. NEUTRAL base ============================ */
+.screen { max-width: 660px; margin: 44px auto; padding: 0 22px; }
+.screen h1 { font-size: 1.55rem; line-height: 1.25; margin: 0 0 14px; }
 .screen h2 { font-size: 1.3rem; margin: 0 0 12px; }
-.screen h3 { font-size: 1rem; margin: 16px 0 4px; }
+.screen h3 { font-size: 1rem; margin: 18px 0 4px; }
 .screen p  { margin: 0 0 12px; }
 
-button {
-  font: inherit; padding: 10px 20px; border: 1px solid #262A33;
-  background: #262A33; color: #fff; border-radius: 6px; cursor: pointer;
-}
+button { font: inherit; padding: 10px 18px; cursor: pointer; }
 button:disabled { opacity: 0.45; cursor: not-allowed; }
-
 .age-options { display: flex; gap: 10px; flex-wrap: wrap; }
 
-/* screening list (neutral, shared by both groups) */
-.screen-q { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+.screen-q { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid #ECEEF2; }
 .q-text { margin: 0 0 6px; }
-.q-opts { margin: 0 0 8px; padding-left: 20px; color: #555963; font-size: 0.92rem; }
+.q-opts { margin: 0 0 8px; padding-left: 20px; color: #6B7280; font-size: 0.92rem; }
 .q-opts li { margin: 1px 0; }
-.known-label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; cursor: pointer; }
+.known-label { display: inline-flex; align-items: center; gap: 7px; font-size: 0.95rem; cursor: pointer; }
 .known-label input { width: 16px; height: 16px; }
 #screeningSubmit { margin-top: 18px; }
 
-/* =========================================================================
-   2. GROUP A skin  —  enhanced, modern, blue
-   ========================================================================= */
+/* ============================ 2. GROUP A skin =========================== */
 body[data-group="A"] {
-  background: #F5F7FC;
-  --pri: #407AFC;
-  --pri-dark: #2E5FD0;
-  --pri-tint: #EAF1FF;
-  --ink: #262A33;
-  --muted: #555963;
-  --border: #D8DEEA;
-  --surface: #ffffff;
-  --ok: #16A34A;   --ok-bg: #E7F6EC;
-  --no: #DC2626;   --no-bg: #FDECEC;
+  --pri: #407AFC; --pri-dark: #2E5FD0; --pri-tint: #E9F0FF; --pri-tint2: #F4F8FF;
+  --ink: #1E2430; --muted: #6B7280; --border: #E4E9F2; --surface: #ffffff;
+  --ok: #17B26A; --ok-bg: #E7F8EF; --no: #F04438; --no-bg: #FEECEA;
+  background:
+    radial-gradient(1200px 600px at 100% -10%, #E6EEFF 0%, rgba(230,238,255,0) 55%),
+    #F6F8FE;
+  min-height: 100vh; color: var(--ink);
 }
-body[data-group="A"] .screen { max-width: 620px; }
-body[data-group="A"] h2 { color: var(--ink); letter-spacing: -0.01em; }
+body[data-group="A"] .screen { max-width: 600px; margin: 0 auto; padding: 26px 22px 60px; }
+body[data-group="A"] h2 { font-size: 1.45rem; letter-spacing: -0.02em; margin: 0 0 6px; }
 body[data-group="A"] .screen > p { color: var(--muted); }
 
-/* --- learning: timer bar --- */
+/* timer bar */
 body[data-group="A"] .learn-timerbar {
-  position: sticky; top: 0; z-index: 5;
-  background: rgba(245,247,252,0.92); backdrop-filter: blur(6px);
-  padding: 14px 0 10px; margin-bottom: 14px;
+  position: sticky; top: 0; z-index: 5; padding: 16px 0 12px;
+  background: linear-gradient(#F6F8FE 72%, rgba(246,248,254,0));
 }
 body[data-group="A"] .learn-timerrow {
-  display: flex; justify-content: space-between; align-items: baseline;
-  font-weight: 600; color: var(--ink);
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 600; color: var(--muted); font-size: 0.82rem;
+  text-transform: uppercase; letter-spacing: 0.07em;
 }
 body[data-group="A"] .learn-timer {
-  font-variant-numeric: tabular-nums; font-size: 1.35rem; color: var(--pri);
+  font-variant-numeric: tabular-nums; font-size: 1.5rem; color: var(--pri);
+  letter-spacing: 0; text-transform: none;
 }
 body[data-group="A"] .learn-timeprogress {
-  height: 5px; background: #E1E7F2; border-radius: 99px; margin-top: 8px; overflow: hidden;
+  height: 6px; background: #DCE4F5; border-radius: 99px; margin-top: 10px; overflow: hidden;
 }
 body[data-group="A"] .learn-timeprogress span {
-  display: block; height: 100%; width: 100%; background: var(--pri);
-  border-radius: 99px; transition: width 0.25s linear;
+  display: block; height: 100%; width: 100%;
+  background: linear-gradient(90deg, #5B93FF, var(--pri)); border-radius: 99px;
+  transition: width 0.25s linear;
 }
 
-/* --- learning + quiz: cards --- */
-body[data-group="A"] .learn-item,
+/* learning cards */
+body[data-group="A"] .learn-item {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+  padding: 22px; margin: 0 0 16px;
+  box-shadow: 0 1px 2px rgba(30,36,48,0.04), 0 12px 30px rgba(30,36,48,0.06);
+}
+body[data-group="A"] .learn-q { margin: 0 0 14px; font-weight: 650; font-size: 1.05rem; }
+
+/* quiz question (airy, no card) */
 body[data-group="A"] .quiz-q {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-  padding: 18px 18px; box-shadow: 0 1px 2px rgba(38,42,51,0.04), 0 6px 18px rgba(38,42,51,0.05);
+  margin: 0 0 20px; font-size: 1.35rem; font-weight: 650; line-height: 1.3; letter-spacing: -0.01em;
 }
-body[data-group="A"] .learn-item { margin: 0 0 16px; }
-body[data-group="A"] .learn-q { margin: 0 0 12px; font-weight: 600; }
-body[data-group="A"] .quiz-q { margin: 0 0 16px; font-size: 1.1rem; font-weight: 600; }
 
-/* --- options (shared look for learn + quiz) --- */
+/* options with lettered badges */
 body[data-group="A"] .learn-opts,
-body[data-group="A"] .quiz-opts { display: flex; flex-direction: column; gap: 9px; margin-bottom: 12px; }
+body[data-group="A"] .quiz-opts { display: flex; flex-direction: column; gap: 10px; margin: 0 0 14px; counter-reset: opt; }
 
 body[data-group="A"] .learn-opt,
 body[data-group="A"] .quiz-opt {
-  position: relative; margin: 0; text-align: left; padding: 12px 44px 12px 15px;
+  position: relative; margin: 0; text-align: left; padding: 15px 16px 15px 60px;
   border: 1.5px solid var(--border); background: #fff; color: var(--ink);
-  border-radius: 10px; cursor: pointer; font-size: 0.98rem;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.05s;
+  border-radius: 14px; cursor: pointer; font-size: 1rem; line-height: 1.3;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.06s;
+}
+body[data-group="A"] .learn-opt::before,
+body[data-group="A"] .quiz-opt::before {
+  counter-increment: opt; content: counter(opt, upper-alpha);
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--pri-tint); color: var(--pri);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem; transition: background 0.15s, color 0.15s;
 }
 body[data-group="A"] .learn-opt:hover:not(:disabled),
 body[data-group="A"] .quiz-opt:hover:not(:disabled) {
-  border-color: #B9C6E6; box-shadow: 0 3px 10px rgba(64,122,252,0.10);
+  border-color: #C3D2F5; box-shadow: 0 4px 14px rgba(64,122,252,0.12); transform: translateY(-1px);
 }
-body[data-group="A"] .learn-opt:active:not(:disabled),
-body[data-group="A"] .quiz-opt:active:not(:disabled) { transform: translateY(1px); }
-
 body[data-group="A"] .learn-opt.selected,
-body[data-group="A"] .quiz-opt.selected {
-  border-color: var(--pri); background: var(--pri-tint);
-}
-body[data-group="A"] .learn-opt.selected::after,
-body[data-group="A"] .quiz-opt.selected::after {
-  content: "✓"; position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-  color: var(--pri); font-weight: 700;
-}
-/* learning feedback colours */
-body[data-group="A"] .learn-opt.is-correct { border-color: var(--ok); background: var(--ok-bg); }
-body[data-group="A"] .learn-opt.is-correct::after { content: "✓"; color: var(--ok); }
-body[data-group="A"] .learn-opt.is-wrong { border-color: var(--no); background: var(--no-bg); }
-body[data-group="A"] .learn-opt.is-wrong::after { content: "✕"; color: var(--no); }
+body[data-group="A"] .quiz-opt.selected { border-color: var(--pri); background: var(--pri-tint2); }
+body[data-group="A"] .learn-opt.selected::before,
+body[data-group="A"] .quiz-opt.selected::before { background: var(--pri); color: #fff; }
 
-/* --- check / next buttons --- */
+/* learning feedback */
+body[data-group="A"] .learn-opt.is-correct { border-color: var(--ok); background: var(--ok-bg); }
+body[data-group="A"] .learn-opt.is-correct::before { background: var(--ok) !important; color: #fff !important; content: "✓" !important; }
+body[data-group="A"] .learn-opt.is-wrong { border-color: var(--no); background: var(--no-bg); }
+body[data-group="A"] .learn-opt.is-wrong::before { background: var(--no) !important; color: #fff !important; content: "✕" !important; }
+
+/* primary buttons */
 body[data-group="A"] .learn-check,
 body[data-group="A"] #quizNext {
-  background: var(--pri); border: none; color: #fff; padding: 11px 22px;
-  border-radius: 10px; font-weight: 600;
-  box-shadow: 0 2px 8px rgba(64,122,252,0.25); transition: background 0.15s, box-shadow 0.15s;
+  background: var(--pri); color: #fff; padding: 12px 26px; border-radius: 12px; font-weight: 600;
+  box-shadow: 0 4px 14px rgba(64,122,252,0.30); transition: background 0.15s, box-shadow 0.15s, transform 0.06s;
 }
 body[data-group="A"] .learn-check:hover:not(:disabled),
-body[data-group="A"] #quizNext:hover:not(:disabled) { background: var(--pri-dark); }
+body[data-group="A"] #quizNext:hover:not(:disabled) { background: var(--pri-dark); box-shadow: 0 6px 18px rgba(64,122,252,0.35); }
+body[data-group="A"] #quizNext:active:not(:disabled) { transform: translateY(1px); }
 body[data-group="A"] .learn-check:disabled,
-body[data-group="A"] #quizNext:disabled { background: #B9C6E6; box-shadow: none; }
+body[data-group="A"] #quizNext:disabled { background: #C3D2F5; box-shadow: none; }
+body[data-group="A"] #quizNext { display: block; width: 100%; font-size: 1.02rem; }
 
-/* --- learning reveal --- */
+/* learning reveal */
 body[data-group="A"] .learn-reveal {
-  margin-top: 12px; padding: 12px 14px; background: #F5F7FC;
-  border: 1px solid var(--border); border-radius: 10px;
-  animation: revealIn 0.25s ease;
+  margin-top: 14px; padding: 14px 16px; background: var(--pri-tint2);
+  border: 1px solid var(--border); border-radius: 12px; animation: revealIn 0.25s ease;
 }
-body[data-group="A"] .reveal-status { margin: 0 0 4px; font-weight: 700; }
+body[data-group="A"] .reveal-status { margin: 0 0 5px; font-weight: 700; }
 body[data-group="A"] .reveal-exp { margin: 0; color: var(--muted); }
 
 body[data-group="A"] .learn-endnote {
-  margin: 18px 0 40px; padding: 14px 16px; background: var(--pri-tint);
-  border-radius: 12px; color: var(--pri-dark); font-weight: 500;
+  margin: 20px 0 10px; padding: 16px 18px; background: var(--pri-tint);
+  border-radius: 14px; color: var(--pri-dark); font-weight: 500; text-align: center;
 }
 
-/* --- quiz progress --- */
-body[data-group="A"] .quiz-progress { color: var(--muted); font-size: 0.9rem; margin-bottom: 8px; }
-body[data-group="A"] .quiz-bar { height: 6px; background: #E1E7F2; border-radius: 99px; margin-bottom: 18px; overflow: hidden; }
-body[data-group="A"] .quiz-bar span { display: block; height: 100%; background: var(--pri); border-radius: 99px; transition: width 0.3s ease; }
+/* quiz progress */
+body[data-group="A"] .quiz-progress {
+  color: var(--muted); font-size: 0.78rem; margin: 0 0 8px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+body[data-group="A"] .quiz-bar { height: 7px; background: #DCE4F5; border-radius: 99px; margin: 0 0 24px; overflow: hidden; }
+body[data-group="A"] .quiz-bar span { display: block; height: 100%; background: linear-gradient(90deg, #5B93FF, var(--pri)); border-radius: 99px; transition: width 0.35s ease; }
 
-@keyframes revealIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes revealIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
 
-/* =========================================================================
-   3. GROUP B skin  —  deliberately bare / unstyled
-   ========================================================================= */
+/* ============================ 3. GROUP B skin =========================== */
 body[data-group="B"] { background: #ffffff; }
-body[data-group="B"] .screen {
-  max-width: none; margin: 8px; padding: 0;
-  font-family: "Times New Roman", Times, serif;
-}
+body[data-group="B"] .screen { max-width: none; margin: 8px; padding: 0; font-family: "Times New Roman", Times, serif; }
 body[data-group="B"] .screen h2 { font-family: inherit; font-weight: bold; }
-
-/* timer: plain text, not sticky, no progress bar */
 body[data-group="B"] .learn-timerbar { position: static; background: none; padding: 0; margin: 0 0 6px; }
 body[data-group="B"] .learn-timerrow { display: inline; }
 body[data-group="B"] .learn-timer { font-weight: normal; }
-body[data-group="B"] .learn-timeprogress { display: none; }
-body[data-group="B"] .quiz-bar { display: none; }
-
-/* items: no cards */
+body[data-group="B"] .learn-timeprogress, body[data-group="B"] .quiz-bar { display: none; }
 body[data-group="B"] .learn-item { margin: 0 0 14px; padding: 0; border: none; }
 body[data-group="B"] .learn-item + .learn-item { border-top: 1px solid #000; padding-top: 10px; }
-
-/* options: revert to default browser buttons */
-body[data-group="B"] .learn-opts,
-body[data-group="B"] .quiz-opts { display: block; }
-body[data-group="B"] .learn-opt,
-body[data-group="B"] .quiz-opt { all: revert; display: block; margin: 3px 0; }
-body[data-group="B"] .learn-opt.selected,
-body[data-group="B"] .quiz-opt.selected { outline: 2px solid #000; font-weight: bold; }
-/* learning feedback: text only, no colour */
+body[data-group="B"] .learn-opts, body[data-group="B"] .quiz-opts { display: block; }
+body[data-group="B"] .learn-opt, body[data-group="B"] .quiz-opt { all: revert; display: block; margin: 3px 0; }
+body[data-group="B"] .learn-opt.selected, body[data-group="B"] .quiz-opt.selected { outline: 2px solid #000; font-weight: bold; }
 body[data-group="B"] .learn-opt.is-correct { font-weight: bold; }
 body[data-group="B"] .learn-opt.is-correct::after { content: " (correct answer)"; }
 body[data-group="B"] .learn-opt.is-wrong::after { content: " (your answer)"; }
-
-body[data-group="B"] .learn-check,
-body[data-group="B"] #quizNext { all: revert; margin-top: 4px; }
-
+body[data-group="B"] .learn-check, body[data-group="B"] #quizNext { all: revert; margin-top: 4px; }
 body[data-group="B"] .learn-reveal { margin: 6px 0; padding: 0; background: none; border: none; }
 body[data-group="B"] .reveal-status { margin: 0; font-weight: bold; }
 body[data-group="B"] .reveal-exp { margin: 0; }
 body[data-group="B"] .learn-endnote { margin: 12px 0; padding: 0; background: none; font-style: italic; }
 body[data-group="B"] .quiz-progress { margin-bottom: 8px; }
 
-/* =========================================================================
-   accessibility: respect reduced motion
-   ========================================================================= */
-@media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+@media (max-width: 480px) {
+  body[data-group="A"] .screen { padding: 20px 16px 50px; }
+  body[data-group="A"] .quiz-q { font-size: 1.15rem; }
 }
