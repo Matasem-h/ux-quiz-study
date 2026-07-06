@@ -6,7 +6,7 @@ const app = document.getElementById("app");
 
 // TESTING TIP: set LEARNING_SECONDS to a small number (e.g. 5) to test quickly,
 // then restore it to 180 (3 minutes) before launch.
-const LEARNING_SECONDS = 10;
+const LEARNING_SECONDS = 60;
 
 // In-memory state for this session. Fields are filled as phases progress.
 const state = {
