@@ -18,6 +18,10 @@ const state = {
   knownIds: [],
   selectedIds: [],    // the 20 questions this participant will get
   _learnInterval: null,
+  quizQuestions: [],
+  quizIndex: 0,
+  quizCorrect: 0,
+  _quizStart: 0,
 };
 
 function render(html) { app.innerHTML = html; }
@@ -281,6 +285,9 @@ async function showLearning() {
          Try to answer before checking &mdash; it helps you remember. The quiz starts
          automatically when the time is up.</p>
       <div class="learn-list">${itemsHtml}</div>
+      <p class="learn-endnote">That's the end of the learning material. If you have time
+         left, feel free to scroll back up and review the answers &mdash; you will be
+         tested on them next.</p>
     </div>
   `);
 
@@ -356,16 +363,86 @@ async function finishLearning() {
   showQuiz();
 }
 
-// ── PHASE 3: Quiz (placeholder — built next) ──
+// ── PHASE 3: Quiz (one at a time, no feedback, response time recorded) ──
 function showQuiz() {
-  const qs = getSelectedQuestions();
+  state.quizQuestions = getSelectedQuestions();
+  state.quizIndex = 0;
+  state.quizCorrect = 0;
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const q = state.quizQuestions[state.quizIndex];
+  const n = state.quizIndex + 1;
+  const total = state.quizQuestions.length;
+  const isLast = (n === total);
+
+  render(`
+    <div class="screen quiz" data-group="${state.group}">
+      <div class="quiz-progress">Question ${n} of ${total}</div>
+      <p class="quiz-q"><strong>${q.text}</strong></p>
+      <div class="quiz-opts">
+        ${q.options.map((o, idx) => `<button class="quiz-opt" data-idx="${idx}">${o}</button>`).join("")}
+      </div>
+      <button id="quizNext" disabled>${isLast ? "Finish" : "Next"}</button>
+    </div>
+  `);
+
+  // Start the response-time clock for this question.
+  state._quizStart = performance.now();
+
+  const opts = document.querySelectorAll(".quiz-opt");
+  const nextBtn = document.getElementById("quizNext");
+  opts.forEach(b => b.addEventListener("click", () => {
+    opts.forEach(x => x.classList.remove("selected"));
+    b.classList.add("selected");
+    nextBtn.disabled = false;
+  }));
+  nextBtn.addEventListener("click", handleQuizNext);
+}
+
+async function handleQuizNext() {
+  const selected = document.querySelector(".quiz-opt.selected");
+  if (!selected) return;
+  const nextBtn = document.getElementById("quizNext");
+  nextBtn.disabled = true;  // guard against double-clicks
+
+  const q = state.quizQuestions[state.quizIndex];
+  const chosen = q.options[parseInt(selected.dataset.idx, 10)];
+  const isCorrect = (chosen === q.correct);
+  const responseMs = Math.round(performance.now() - state._quizStart);
+  if (isCorrect) state.quizCorrect++;
+
+  // Record this answer immediately (incremental write → abandonment-safe).
+  await insertAnswer(state.participantId, {
+    question_id: q.id,
+    selected_answer: chosen,
+    is_correct: isCorrect,
+    response_time_ms: responseMs
+  });
+
+  // Progress marker (non-critical; the answers table is the real trace).
+  updateParticipant(state.participantId, { last_reached_question: state.quizIndex + 1 });
+
+  state.quizIndex++;
+  if (state.quizIndex < state.quizQuestions.length) {
+    renderQuizQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+async function finishQuiz() {
+  await updateParticipant(state.participantId, {
+    status: "completed",
+    last_reached_phase: "quiz",
+    last_reached_question: state.quizQuestions.length
+  });
   render(`
     <div class="screen">
-      <h2>Learning time is up ✅</h2>
-      <p>The quiz would begin now, with ${qs.length} questions.</p>
-      <p style="font-family:monospace;font-size:0.8rem;color:#888;">group: ${state.group} ·
-         participant: ${state.participantId}</p>
-      <p>(The Quiz phase is built next.)</p>
+      <h2>Thank you &mdash; you're all done!</h2>
+      <p>Your responses have been recorded. Thank you very much for taking part in this study.
+         You may now close this page.</p>
     </div>
   `);
 }
