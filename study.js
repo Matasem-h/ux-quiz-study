@@ -24,7 +24,11 @@ const state = {
   _quizStart: 0,
 };
 
-function render(html) { app.innerHTML = html; }
+function render(html, group) {
+  app.innerHTML = html;
+  if (group === "A" || group === "B") document.body.setAttribute("data-group", group);
+  else document.body.removeAttribute("data-group");
+}
 
 // Fisher–Yates shuffle (returns a new array).
 function shuffle(arr) {
@@ -276,8 +280,11 @@ async function showLearning() {
   render(`
     <div class="screen learning" data-group="${state.group}">
       <div class="learn-timerbar">
-        <span>Learning time remaining</span>
-        <span id="learnTimer" class="learn-timer">${formatTime(LEARNING_SECONDS)}</span>
+        <div class="learn-timerrow">
+          <span>Learning time remaining</span>
+          <span id="learnTimer" class="learn-timer">${formatTime(LEARNING_SECONDS)}</span>
+        </div>
+        <div class="learn-timeprogress"><span id="learnBar"></span></div>
       </div>
       <h2>Learning phase</h2>
       <p>For each question, choose the answer you think is correct, then press
@@ -289,7 +296,7 @@ async function showLearning() {
          left, feel free to scroll back up and review the answers &mdash; you will be
          tested on them next.</p>
     </div>
-  `);
+  `, state.group);
 
   // Mark that they reached the learning screen (incremental log).
   updateParticipant(state.participantId, { learning_entered: true });
@@ -340,9 +347,11 @@ async function showLearning() {
   // Countdown from a fixed end time (robust to tab throttling).
   const endAt = Date.now() + LEARNING_SECONDS * 1000;
   const timerEl = document.getElementById("learnTimer");
+  const barEl = document.getElementById("learnBar");
   const tick = () => {
     const remaining = Math.max(0, Math.round((endAt - Date.now()) / 1000));
     if (timerEl) timerEl.textContent = formatTime(remaining);
+    if (barEl) barEl.style.width = (remaining / LEARNING_SECONDS * 100) + "%";
     if (remaining <= 0) {
       clearInterval(state._learnInterval);
       finishLearning();
@@ -380,6 +389,7 @@ function renderQuizQuestion() {
   render(`
     <div class="screen quiz" data-group="${state.group}">
       <div class="quiz-progress">Question ${n} of ${total}</div>
+      <div class="quiz-bar"><span style="width:${Math.round(n / total * 100)}%"></span></div>
       <p class="quiz-q"><strong>${q.text}</strong></p>
       <div class="quiz-opts">
         ${q.options.map((o, idx) => `<button class="quiz-opt" data-idx="${idx}">${o}</button>`).join("")}

@@ -4,58 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nature &amp; Animals Study</title>
-
-  <!-- TEMPORARY neutral base styling, just so the phases are readable while we -->
-  <!-- build the logic. This gets replaced by style.css (the two skins) later.  -->
-  <style>
-    body { font-family: system-ui, sans-serif; line-height: 1.55; color: #1a1a1a;
-           max-width: 660px; margin: 40px auto; padding: 0 20px; }
-    .screen h1 { font-size: 1.4rem; }
-    .screen h2 { font-size: 1.25rem; }
-    .screen h3 { font-size: 1rem; margin-bottom: 4px; }
-    button { padding: 10px 18px; font-size: 1rem; cursor: pointer; margin-top: 8px; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .age-options { display: flex; gap: 10px; flex-wrap: wrap; }
-
-    /* screening list */
-    .screen-q { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
-    .q-text { margin: 0 0 6px; }
-    .q-opts { margin: 0 0 8px; padding-left: 20px; color: #555; font-size: 0.92rem; }
-    .q-opts li { margin: 1px 0; }
-    .known-label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; cursor: pointer; }
-    #screeningSubmit { margin-top: 16px; }
-
-    /* learning phase */
-    .learn-timerbar { position: sticky; top: 0; background: #fff; padding: 12px 0;
-                      margin-bottom: 8px; border-bottom: 2px solid #333;
-                      display: flex; justify-content: space-between; align-items: baseline;
-                      font-weight: bold; }
-    .learn-timer { font-variant-numeric: tabular-nums; font-size: 1.2rem; }
-    .learn-item { margin: 0 0 20px; padding-bottom: 16px; border-bottom: 1px solid #eee; }
-    .learn-q { margin: 0 0 8px; }
-    .learn-opts { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
-    .learn-opt { margin: 0; text-align: left; padding: 8px 12px; border: 1px solid #ccc;
-                 background: #fff; border-radius: 4px; cursor: pointer; font-size: 0.95rem; }
-    .learn-opt.selected { border-color: #333; background: #f0f0f0; }
-    .learn-opt.is-correct { border-color: #1a7f37; background: #e6f4ea; }
-    .learn-opt.is-wrong { border-color: #b42318; background: #fde8e6; }
-    .learn-opt:disabled { cursor: default; }
-    .learn-check { margin-top: 2px; }
-    .learn-reveal { margin-top: 8px; padding: 8px 12px; background: #f6f6f6; border-radius: 4px; }
-    .reveal-status { margin: 0 0 4px; font-weight: bold; }
-    .reveal-exp { margin: 0; color: #444; }
-    .learn-endnote { margin: 16px 0 0; padding: 12px 14px; background: #f0f4f8;
-                     border-radius: 4px; font-style: italic; color: #444; }
-
-    /* quiz phase */
-    .quiz-progress { color: #666; font-size: 0.9rem; margin-bottom: 10px; }
-    .quiz-q { margin: 0 0 14px; font-size: 1.05rem; }
-    .quiz-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-    .quiz-opt { margin: 0; text-align: left; padding: 10px 14px; border: 1px solid #ccc;
-                background: #fff; border-radius: 4px; cursor: pointer; font-size: 0.98rem; }
-    .quiz-opt.selected { border-color: #333; background: #eef2ff; }
-    #quizNext { margin-top: 2px; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
