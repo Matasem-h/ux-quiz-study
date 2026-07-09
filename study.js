@@ -6,7 +6,7 @@ const app = document.getElementById("app");
 
 // TESTING TIP: set LEARNING_SECONDS to a small number (e.g. 5) to test quickly,
 // then restore it to 180 (3 minutes) before launch.
-const LEARNING_SECONDS = 60;
+const LEARNING_SECONDS = 5;
 
 // In-memory state for this session. Fields are filled as phases progress.
 const state = {
@@ -43,6 +43,23 @@ function shuffle(arr) {
 // Look up the participant's selected questions, in their selected order.
 function getSelectedQuestions() {
   return state.selectedIds.map(id => QUESTIONS.find(q => q.id === id)).filter(Boolean);
+}
+
+// ── Image helpers (Group A only; Group B never renders images) ──
+// q.image may be: null (none) | "path.jpg" (one) | [4 paths] (one per option)
+function questionImageHtml(q) {
+  if (state.group !== "A") return "";
+  if (typeof q.image !== "string" || !q.image) return "";
+  return `<div class="q-image"><img src="${q.image}" alt="" loading="lazy"></div>`;
+}
+function optionImageHtml(q, idx) {
+  if (state.group !== "A") return "";
+  if (!Array.isArray(q.image) || !q.image[idx]) return "";
+  return `<span class="opt-image"><img src="${q.image[idx]}" alt="" loading="lazy"></span>`;
+}
+// Options rendered with four-image sets get a different layout class.
+function optsLayoutClass(q) {
+  return (state.group === "A" && Array.isArray(q.image)) ? " opts-grid" : "";
 }
 
 function formatTime(sec) {
@@ -167,7 +184,11 @@ async function handleAge(band) {
 
   render(`<div class="screen"><p>Setting up your session…</p></div>`);
 
+  const group = await assignGroup();
+  state.group = group;
+
   const id = await createParticipant({
+    group_assignment: group,
     age_band: band,
     age_eligible: true,
     consent_given: true,
@@ -237,17 +258,12 @@ async function handleScreeningSubmit() {
     return;
   }
 
-  // Eligible: assign the group now (only fully-eligible participants get a group),
-  // then randomly pick 20 from the unknown pool.
-  const group = await assignGroup();
-  state.group = group;
-
+  // Eligible: randomly pick 20 from the unknown pool.
   const unknownIds = QUESTIONS.map(q => q.id).filter(id => !checked.includes(id));
   const selected = shuffle(unknownIds).slice(0, 20);
   state.selectedIds = selected;
 
   await updateParticipant(state.participantId, {
-    group_assignment: group,
     known_count: state.knownCount,
     known_question_ids: checked,
     eligible_after_screening: true,
@@ -270,8 +286,9 @@ async function showLearning() {
   const itemsHtml = qs.map((q, i) => `
     <div class="learn-item" data-qid="${q.id}">
       <p class="learn-q"><strong>${i + 1}. ${q.text}</strong></p>
-      <div class="learn-opts">
-        ${q.options.map((o, idx) => `<button class="learn-opt" data-idx="${idx}">${o}</button>`).join("")}
+      ${questionImageHtml(q)}
+      <div class="learn-opts${optsLayoutClass(q)}">
+        ${q.options.map((o, idx) => `<button class="learn-opt" data-idx="${idx}">${optionImageHtml(q, idx)}<span class="opt-text">${o}</span></button>`).join("")}
       </div>
       <button class="learn-check" disabled>Check answer</button>
       <div class="learn-reveal" hidden></div>
@@ -392,8 +409,9 @@ function renderQuizQuestion() {
       <div class="quiz-progress">Question ${n} of ${total}</div>
       <div class="quiz-bar"><span style="width:${Math.round(n / total * 100)}%"></span></div>
       <p class="quiz-q"><strong>${q.text}</strong></p>
-      <div class="quiz-opts">
-        ${q.options.map((o, idx) => `<button class="quiz-opt" data-idx="${idx}">${o}</button>`).join("")}
+      ${questionImageHtml(q)}
+      <div class="quiz-opts${optsLayoutClass(q)}">
+        ${q.options.map((o, idx) => `<button class="quiz-opt" data-idx="${idx}">${optionImageHtml(q, idx)}<span class="opt-text">${o}</span></button>`).join("")}
       </div>
       <button id="quizNext" disabled>${isLast ? "Finish" : "Next"}</button>
     </div>
@@ -473,3 +491,5 @@ function showExcluded(reason) {
 
 // ── Start the flow ──
 showConsent();
+
+

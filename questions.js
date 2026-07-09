@@ -4,6 +4,15 @@
 // "explanation": Is a short fact shown during the Learning Phase. 
 // Sources were added per-question for traceability (they are NOT shown to participants).
 
+//    null                        → text-only (no image). Always a safe fallback.
+//    "images/foo.jpg"            → ONE illustrative image, shown under the question.
+//                                  Use ONLY when the image cannot reveal the answer.
+//    ["a.jpg","b.jpg","c.jpg","d.jpg"] → FOUR images, one per option in order.
+//                                  Use when a single image would give the answer away.
+//                                  The four MUST be matched in style/quality/framing,
+//                                  or the "nicer" image becomes an accidental cue.
+
+
 const QUESTIONS = [
   // Source: https://www.britannica.com/science/What-Animal-Has-the-Longest-Life-Span
   { id: 1,  text: "Which animal has the longest known lifespan of any vertebrate?",
@@ -14,7 +23,11 @@ const QUESTIONS = [
   // Source: https://www.britannica.com/list/5-surprising-facts-about-bats
   { id: 2,  text: "What is the only mammal capable of flight?",
     options: ["Flying squirrel", "Colugo", "Bat", "Sugar glider"],
-    correct: "Bat", image: null,
+    correct: "Bat",
+    // FOUR-image example: one per option, in the same order as `options`.
+    // A single photo of a bat would reveal the answer; four matched photos do not.
+    image: ["images/q2-flying-squirrel.jpg", "images/q2-colugo.jpg",
+            "images/q2-bat.jpg", "images/q2-sugar-glider.jpg"],
     explanation: "Bats are the only mammals capable of flight; the others listed only glide."},
 
   // Source: https://www.britannica.com/science/How-Many-Hearts-Does-an-Octopus-Have
@@ -134,7 +147,10 @@ const QUESTIONS = [
   // Source: https://www.britannica.com/science/How-Hot-Can-Lightning-Get
   { id: 22, text: "A bolt of lightning is roughly how many times hotter than the surface of the sun?",
     options: ["About the same", "Twice", "Around five times", "Around fifty times"],
-    correct: "Around five times", image: null,
+    correct: "Around five times",
+    // SINGLE-image example: a lightning photo illustrates the topic but cannot
+    // hint at "five times", so it is safe.
+    image: "images/q22-lightning.jpg",
     explanation: "A lightning bolt can reach about five times the temperature of the sun's surface."},
 
   // Source: https://www.britannica.com/animal/peregrine-falcon
