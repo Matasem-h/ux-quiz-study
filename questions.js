@@ -4,15 +4,6 @@
 // "explanation": Is a short fact shown during the Learning Phase. 
 // Sources were added per-question for traceability (they are NOT shown to participants).
 
-//    null                        → text-only (no image). Always a safe fallback.
-//    "images/foo.jpg"            → ONE illustrative image, shown under the question.
-//                                  Use ONLY when the image cannot reveal the answer.
-//    ["a.jpg","b.jpg","c.jpg","d.jpg"] → FOUR images, one per option in order.
-//                                  Use when a single image would give the answer away.
-//                                  The four MUST be matched in style/quality/framing,
-//                                  or the "nicer" image becomes an accidental cue.
-
-
 const QUESTIONS = [
   // Source: https://www.britannica.com/science/What-Animal-Has-the-Longest-Life-Span
   { id: 1,  text: "Which animal has the longest known lifespan of any vertebrate?",
