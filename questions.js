@@ -218,9 +218,9 @@ const QUESTIONS = [
     explanation: "The sperm whale is the loudest animal on Earth, it can produce sounds that reach 230 decibels"},
 
   // Source: https://medium.com/did-you-know-short-fun-facts/science-animals-facts-c5077b2aa6ac
-  { id: 30, text: "Which part of an ostrich is bigger than its brain?",
-    options: ["Its heart", "Its eye", "Its stomach", "Its foot"],
-    correct: "Its eye",
+  { id: 30, text: "An ostrich's eye is notable for being larger than what?",
+    options: ["Its brain", "Its stomach", "Its heart", "Its liver"],
+    correct: "Its brain",
     image: "images/Q30/1-Ostrich.jpg",
     explanation: "An ostrich's eye is bigger than its brain; each eyeball is about the size of a billiard ball."},
 ];

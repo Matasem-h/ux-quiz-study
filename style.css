@@ -28,6 +28,7 @@ body {
 
 button { font: inherit; padding: 10px 18px; cursor: pointer; }
 button:disabled { opacity: 0.45; cursor: not-allowed; }
+button:focus-visible { outline: 3px solid rgba(64,122,252,0.45); outline-offset: 2px; }
 
 .age-options { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -58,8 +59,13 @@ body[data-group="A"] .screen > p { color: var(--muted); }
 
 /* timer bar */
 body[data-group="A"] .learn-timerbar {
-  position: sticky; top: 0; z-index: 5; padding: 16px 0 12px;
-  background: linear-gradient(#F6F8FE 72%, rgba(246,248,254,0));
+  position: sticky; top: 8px; z-index: 5;
+  padding: 14px 18px;                 /* breathing room from the edges */
+  margin: 6px 0 16px;
+  background: #F6F8FE;                 /* SAME grey as the page (no peek-through) */
+  border: 1px solid var(--border);
+  border-radius: 14px;                /* rounded pill, stays rounded when scrolling */
+  box-shadow: 0 4px 14px rgba(30,36,48,0.08);
 }
 body[data-group="A"] .learn-timerrow {
   display: flex; justify-content: space-between; align-items: center;
@@ -112,6 +118,14 @@ body[data-group="A"] .quiz-opt::before {
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 0.85rem; transition: background 0.15s, color 0.15s;
 }
+/* keyboard focus ring (visible only for keyboard users, not mouse clicks) */
+body[data-group="A"] .learn-opt:focus-visible,
+body[data-group="A"] .quiz-opt:focus-visible,
+body[data-group="A"] .learn-check:focus-visible,
+body[data-group="A"] #quizNext:focus-visible {
+  outline: 3px solid rgba(64,122,252,0.45); outline-offset: 2px;
+}
+
 body[data-group="A"] .learn-opt:hover:not(:disabled),
 body[data-group="A"] .quiz-opt:hover:not(:disabled) {
   border-color: #C3D2F5; box-shadow: 0 4px 14px rgba(64,122,252,0.12); transform: translateY(-1px);
@@ -172,7 +186,7 @@ body[data-group="A"] .learn-check:hover:not(:disabled),
 body[data-group="A"] #quizNext:hover:not(:disabled) { background: var(--pri-dark); box-shadow: 0 6px 18px rgba(64,122,252,0.35); }
 body[data-group="A"] #quizNext:active:not(:disabled) { transform: translateY(1px); }
 body[data-group="A"] .learn-check:disabled,
-body[data-group="A"] #quizNext:disabled { background: #C3D2F5; box-shadow: none; }
+body[data-group="A"] #quizNext:disabled { background: #C3D2F5; color: #4A5568; box-shadow: none; }
 body[data-group="A"] #quizNext { display: block; width: 100%; font-size: 1.02rem; }
 
 /* learning reveal */
@@ -185,7 +199,7 @@ body[data-group="A"] .reveal-exp { margin: 0; color: var(--muted); }
 
 body[data-group="A"] .learn-endnote {
   margin: 20px 0 10px; padding: 16px 18px; background: var(--pri-tint);
-  border-radius: 14px; color: var(--pri-dark); font-weight: 500; text-align: center;
+  border-radius: 14px; color: var(--pri-dark); font-weight: 500; text-align: left;
 }
 
 /* quiz progress */
