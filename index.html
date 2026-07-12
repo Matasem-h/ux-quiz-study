@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- This file is the entry point for the study, it loads the stylesheet and all needed scripts, and the single app container that the whole study renders into. -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,12 +8,14 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- The study flow renders here. -->
+    <!-- The single-page study flow is rendered here, with study.js swapping the phases -->
     <div id="app"></div>
 
-    <!-- Scripts load in order. Plain globals (no modules) so opening the file -->
-    <!-- directly in a browser works without a server. -->
+    <!-- Scripts use plain globals (no ES modules), meaning the file directly works when opened in a browser (NO server needed). -->
+    <!-- ORDER MATTERS: Each file depends on the one above it: Supabase (library) -> config.js (keys) -> questions.js (data) -> db.js (uses both) -> study (uses all). -->
+    <!-- Reordering files WILL break the app with "undefined" errors. -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- @2 pins major version 2 for stability -->
     <script src="config.js"></script>
     <script src="questions.js"></script>
     <script src="db.js"></script>
