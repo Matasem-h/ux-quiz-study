@@ -1,23 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nature &amp; Animals Study</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nature &amp; Animals Study</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- The study flow renders here. -->
+    <div id="app"></div>
 
-  <!-- The study flow renders here. -->
-  <div id="app"></div>
-
-  <!-- Scripts load in order. Plain globals (no modules) so opening the file -->
-  <!-- directly in a browser works without a server. -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script src="questions.js"></script>
-  <script src="db.js"></script>
-  <script src="study.js"></script>
-
-</body>
+    <!-- Scripts load in order. Plain globals (no modules) so opening the file -->
+    <!-- directly in a browser works without a server. -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="questions.js"></script>
+    <script src="db.js"></script>
+    <script src="study.js"></script>
+  </body>
 </html>

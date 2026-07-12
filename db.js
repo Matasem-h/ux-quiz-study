@@ -1,12 +1,17 @@
-// ── Data layer ──
-// Depends on: the Supabase CDN script, and config.js (SUPABASE_URL, SUPABASE_KEY).
-// All writes are insert/update only — no reads — matching the locked-down RLS setup.
+// This file contains the data layer of the application, all of the reading/writing operations carried out in Supabase go through here.
+
+// This file depends on the Supabase CDN script, which is loaded in index.html.
+
+// Security Model: Both the participants + answers tables use Row Level Security.
+// The publishable key can INSERT and UPDATE, and can SELECT.
+// SELECT is required so UPDATE can locate the row it needs to change — an update that cannot "see" its target row silently affects zero rows and fails without error.
+// No sensitive data is stored throughout the application (no name/email), so read access to anonymous study data is an accepted tradeoff.
 
 const dbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Create a participant row. The UUID is generated in the browser so we never
-// need read access to learn the new ID. `initialFields` sets any starting columns.
-// Returns the new participant id, or null on failure.
+// This creates a participant row.
+// The UUID is generated in the browser (not by the database), so we always know the new id without needing to read it back.
+// initialFields  : Is used to set any starting columns (group, age band, consent, status, etc.). It returns the new participant id, or null on failure.
 async function createParticipant(initialFields = {}) {
   const id = crypto.randomUUID();
   const row = {
@@ -22,8 +27,7 @@ async function createParticipant(initialFields = {}) {
   return id;
 }
 
-// Update a participant's row (status, progress, screening results, etc.).
-// `fields` is an object of column → new value. Returns true on success.
+// This updates a participant's row (for example: status, progress, screening results, etc).
 async function updateParticipant(id, fields) {
   const { error } = await dbClient.from("participants").update(fields).eq("id", id);
   if (error) {
@@ -33,8 +37,8 @@ async function updateParticipant(id, fields) {
   return true;
 }
 
-// Insert one answer row for a participant. `answer` holds question_id,
-// selected_answer, is_correct, response_time_ms. Returns true on success.
+// Insert one answer row for a participant.
+// "answer" : Is used to hold question_id, selected_answer, is_correct, response_time_ms. It returns true on success.
 async function insertAnswer(participantId, answer) {
   const row = {
     participant_id: participantId,
