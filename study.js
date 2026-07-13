@@ -91,7 +91,7 @@ async function assignGroup() {
   }
 }
 
-// Phase ---> Welcome + GDPR consent
+// Pre-Screening ---> Welcome + GDPR consent
 function showConsent() {
   render(`
     <div class="screen">
@@ -146,7 +146,7 @@ function showConsent() {
   });
 }
 
-// Phase ---> Age band 
+// Pre-Screening ---> Age band 
 function showAgeScreening() {
   render(`
     <div class="screen">
@@ -204,8 +204,8 @@ async function handleAge(band) {
   showScreening();
 }
 
-// ── PHASE 1: Prior-knowledge screening ──
-// All 30 on one page. Tick only the ones you already know. Unticked = don't know.
+// PHASE 1: Prior-Knowledege Screening
+// All 30 questions are show on one page. Ticked ---> They Know It | Unticked ---> They Do NOT Know It.
 function showScreening() {
   const questionsHtml = QUESTIONS.map(q => `
     <div class="screen-q">
@@ -233,7 +233,7 @@ function showScreening() {
   document.getElementById("screeningSubmit").addEventListener("click", handleScreeningSubmit);
 }
 
-// Tally known, apply exclusion threshold, select 20 from the unknown pool.
+// Identify known questions, apply exclusion, select 20 random questions from the unknown pool.
 async function handleScreeningSubmit() {
   const checked = Array.from(document.querySelectorAll(".known-check:checked"))
     .map(el => parseInt(el.dataset.id, 10));
@@ -242,7 +242,7 @@ async function handleScreeningSubmit() {
 
   render(`<div class="screen"><p>Checking your responses…</p></div>`);
 
-  // 11+ known means fewer than 20 unknown → excluded.
+  // If the user knows 11+ questions ---> Excluded.
   if (state.knownCount >= 11) {
     await updateParticipant(state.participantId, {
       known_count: state.knownCount,
@@ -255,9 +255,7 @@ async function handleScreeningSubmit() {
     return;
   }
 
-  // Eligible. Assign the group NOW (only fully-eligible participants get one — this is
-  // what keeps A/B balanced), then randomly pick this participant's 20 questions from
-  // the pool they did NOT already know.
+  // Eligible users are assigned to a group NOW ---> ONLY fully-eligible participants get assigned, which keeps A/B balanced.
   const group = await assignGroup();
   state.group = group;
 
@@ -278,9 +276,8 @@ async function handleScreeningSubmit() {
   showLearning();
 }
 
-// ── PHASE 2: Learning (interactive, time-limited, forced 3 minutes) ──
-// Each item: pick an option, press "Check answer", then the correct answer and
-// explanation are revealed inline. Retrieval practice (answer-before-feedback).
+// PHASE 2: Learning Phase (interactive, time-limited, forced 3 minutes)
+// Each item: Pick an option, press "Check answer", then the correct answer and explanation are shown to the user.
 async function showLearning() {
   const qs = getSelectedQuestions();
   const byId = {};
@@ -319,7 +316,7 @@ async function showLearning() {
     </div>
   `, state.group);
 
-  // Mark that they reached the learning screen (incremental log).
+  // Record that they reached the Learning Phase.
   updateParticipant(state.participantId, { learning_entered: true });
 
   // One delegated click handler for all items.
@@ -347,7 +344,7 @@ async function showLearning() {
       const chosen = q.options[parseInt(selected.dataset.idx, 10)];
       const isCorrect = (chosen === q.correct);
 
-      // Lock and colour the options.
+      // Lock and color the options.
       item.querySelectorAll(".learn-opt").forEach((b, idx) => {
         if (q.options[idx] === q.correct) b.classList.add("is-correct");
         else if (b === selected) b.classList.add("is-wrong");
@@ -365,7 +362,7 @@ async function showLearning() {
     }
   });
 
-  // Countdown from a fixed end time (robust to tab throttling).
+  // Countdown from a fixed end time.
   const endAt = Date.now() + LEARNING_SECONDS * 1000;
   const timerEl = document.getElementById("learnTimer");
   const barEl = document.getElementById("learnBar");
@@ -393,7 +390,7 @@ async function finishLearning() {
   showQuiz();
 }
 
-// ── PHASE 3: Quiz (one at a time, no feedback, response time recorded) ──
+// PHASE 3: Quiz (one question at a time, no feedback, response time recorded)
 function showQuiz() {
   state.quizQuestions = getSelectedQuestions();
   state.quizIndex = 0;
@@ -420,7 +417,7 @@ function renderQuizQuestion() {
     </div>
   `, state.group);
 
-  // Start the response-time clock for this question.
+  // Start the response-time clock for current question.
   state._quizStart = performance.now();
 
   const opts = document.querySelectorAll(".quiz-opt");
@@ -445,7 +442,7 @@ async function handleQuizNext() {
   const responseMs = Math.round(performance.now() - state._quizStart);
   if (isCorrect) state.quizCorrect++;
 
-  // Record this answer immediately (incremental write → abandonment-safe).
+  // Record this answer immediately (incremental write ---> abandonment is also recorded).
   await insertAnswer(state.participantId, {
     question_id: q.id,
     selected_answer: chosen,
@@ -453,7 +450,7 @@ async function handleQuizNext() {
     response_time_ms: responseMs
   });
 
-  // Progress marker (non-critical; the answers table is the real trace).
+  // Progress marker (non-critical, as the answers table is the real trace).
   updateParticipant(state.participantId, { last_reached_question: state.quizIndex + 1 });
 
   state.quizIndex++;
@@ -479,7 +476,7 @@ async function finishQuiz() {
   `);
 }
 
-// ── Excluded screen (age or knowledge) ──
+// Excluded screen (age or knowledge)
 function showExcluded(reason) {
   const msg = reason === "knowledge"
     ? "Based on your responses, you already know too many of the answers for this study, which focuses on material that is new to participants."
@@ -492,7 +489,7 @@ function showExcluded(reason) {
   `);
 }
 
-// ── Start the flow ──
+// Starting the flow
 showConsent();
 
 
