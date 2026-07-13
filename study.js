@@ -1,14 +1,12 @@
-// ── study.js ── Flow controller. Renders each phase into #app.
-// Depends on: QUESTIONS (questions.js); createParticipant / updateParticipant /
-// insertAnswer / dbClient (db.js).
+// This file is the flow controller, it renderds each phase into the application.
+// This file depends on questions.js and db.js.
 
 const app = document.getElementById("app");
 
-// TESTING TIP: set LEARNING_SECONDS to a small number (e.g. 5) to test quickly,
-// then restore it to 180 (3 minutes) before launch.
+// LEARNING_SECONDS can be set to a low number (e.g., 5s) for testing, it MUST be 180s before launch.
 const LEARNING_SECONDS = 5;
 
-// In-memory state for this session. Fields are filled as phases progress.
+// All of the below fields are filled with data as phases progress.
 const state = {
   participantId: null,
   group: null,        // "A" or "B"
@@ -30,7 +28,7 @@ function render(html, group) {
   else document.body.removeAttribute("data-group");
 }
 
-// Fisher–Yates shuffle (returns a new array).
+// This is used to randomly select the 20 questions for each participant.
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -40,7 +38,7 @@ function shuffle(arr) {
   return a;
 }
 
-// Look up the participant's selected questions, in their selected order.
+// This finds the participant's selected questions, in their selected order.
 function getSelectedQuestions() {
   return state.selectedIds.map(id => QUESTIONS.find(q => q.id === id)).filter(Boolean);
 }
@@ -165,7 +163,8 @@ function showAgeScreening() {
   });
 }
 
-// Age eligibility → exclude, or assign group + create participant + go to screening.
+// Age eligibility gate. Under-18 / over-30 are excluded and recorded. Eligible
+// participants get a participant row created and move to screening (group assigned later).
 async function handleAge(band) {
   state.ageBand = band;
   const eligible = (band === "18–30");
@@ -184,11 +183,11 @@ async function handleAge(band) {
 
   render(`<div class="screen"><p>Setting up your session…</p></div>`);
 
-  const group = await assignGroup();
-  state.group = group;
-
+  // NOTE: the group is NOT assigned here. It is assigned only after the participant
+  // passes the prior-knowledge screening (see handleScreeningSubmit), so that people
+  // excluded at screening don't consume an alternation slot and the A/B groups stay
+  // balanced across participants who actually reach the study.
   const id = await createParticipant({
-    group_assignment: group,
     age_band: band,
     age_eligible: true,
     consent_given: true,
@@ -258,12 +257,18 @@ async function handleScreeningSubmit() {
     return;
   }
 
-  // Eligible: randomly pick 20 from the unknown pool.
+  // Eligible. Assign the group NOW (only fully-eligible participants get one — this is
+  // what keeps A/B balanced), then randomly pick this participant's 20 questions from
+  // the pool they did NOT already know.
+  const group = await assignGroup();
+  state.group = group;
+
   const unknownIds = QUESTIONS.map(q => q.id).filter(id => !checked.includes(id));
   const selected = shuffle(unknownIds).slice(0, 20);
   state.selectedIds = selected;
 
   await updateParticipant(state.participantId, {
+    group_assignment: group,
     known_count: state.knownCount,
     known_question_ids: checked,
     eligible_after_screening: true,
