@@ -4,7 +4,7 @@
 const app = document.getElementById("app");
 
 // LEARNING_SECONDS can be set to a low number (e.g., 5s) for testing, it MUST be 180s before launch.
-const LEARNING_SECONDS = 5;
+const LEARNING_SECONDS = 180;
 
 // All of the below fields are filled with data as phases progress.
 const state = {
