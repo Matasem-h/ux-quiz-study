@@ -1,4 +1,4 @@
-// This file is the flow controller, it renderds each phase into the application.
+// This file is the flow controller, it renders each phase into the application.
 // This file depends on questions.js and db.js.
 
 const app = document.getElementById("app");
@@ -28,7 +28,7 @@ function render(html, group) {
   else document.body.removeAttribute("data-group");
 }
 
-// This is used to randomly select the 20 questions for each participant.
+// This is used to randomly select the 20 questions for each participant, without altering the original list.
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -165,7 +165,7 @@ function showAgeScreening() {
 }
 
 // This is the age eligibility gate ---> Under 18 / Over 30 are excluded and recorded.
-// Eligible participants get a participant row and move on to screening (with group assignment occuring after screening).
+// Eligible participants get a participant row and move on to screening (with group assignment occurring after screening).
 async function handleAge(band) {
   state.ageBand = band;
   const eligible = (band === "18–30");
@@ -204,7 +204,7 @@ async function handleAge(band) {
   showScreening();
 }
 
-// PHASE 1: Prior-Knowledege Screening
+// PHASE 1: Knowledege Screening
 // All 30 questions are show on one page. Ticked ---> They Know It | Unticked ---> They Do NOT Know It.
 function showScreening() {
   const questionsHtml = QUESTIONS.map(q => `
