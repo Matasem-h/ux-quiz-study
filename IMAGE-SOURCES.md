@@ -1,13 +1,8 @@
 # Image Sources
 
-All images are used in the **enhanced UI condition (Group A)** only. The minimal UI
-condition (Group B) shows no images. Images were selected so that no single image
-reveals the correct answer (see the study's image rule); questions where any image
-would reveal the answer, or where there is nothing meaningful to depict, are
-intentionally left text-only.
+All images are used in the **enhanced UI condition (Group A)** only. The minimal UI condition (Group B) shows no images. Images were selected so that no single image reveals the correct answer (see the study's image rule); questions where any image would reveal the answer, or where there is nothing meaningful to depict, are intentionally left text-only.
 
-Sources: [Unsplash](https://unsplash.com) (free to use, no attribution required) and
-[Wikimedia Commons](https://commons.wikimedia.org) (see each file page for its licence).
+Sources: [Unsplash](https://unsplash.com) (free to use, no attribution required) and[Wikimedia Commons](https://commons.wikimedia.org)(see each file page for its licence).
 
 ## Option changes made to allow a fair image set
 
@@ -138,8 +133,4 @@ Sources: [Unsplash](https://unsplash.com) (free to use, no attribution required)
 
 Q1, Q2, Q5, Q8, Q9, Q12, Q13, Q14, Q16, Q17, Q19, Q20, Q21, Q27.
 
-Reasons: an image would reveal the answer (e.g. Q2 - any bat photo shows wings;
-Q14 - a reef photo reveals it; Q27 - mercury photographs as a liquid), the correct
-answer is the visual "odd one out" among the options (Q13 - koala among primates),
-or there is nothing meaningful to depict (Q16 nitrogen, Q17 autotomy - the options
-are abstract terms, not objects).
+Reasons: an image would reveal the answer (e.g. Q2 - any bat photo shows wings; Q14 - a reef photo reveals it; Q27 - mercury photographs as a liquid), the correct answer is the visual "odd one out" among the options (Q13 - koala among primates), or there is nothing meaningful to depict (Q16 nitrogen, Q17 autotomy - the options are abstract terms, not objects).
