@@ -43,8 +43,9 @@ function getSelectedQuestions() {
   return state.selectedIds.map(id => QUESTIONS.find(q => q.id === id)).filter(Boolean);
 }
 
-// ── Image helpers (Group A only; Group B never renders images) ──
-// q.image may be: null (none) | "path.jpg" (one) | [4 paths] (one per option)
+
+// q.image can be null = no image | "path.jpg" = one image | [4 paths] = one image per-option.
+// This is ONLY for Group A, as Group B should NEVER see images.
 function questionImageHtml(q) {
   if (state.group !== "A") return "";
   if (typeof q.image !== "string" || !q.image) return "";
@@ -55,7 +56,7 @@ function optionImageHtml(q, idx) {
   if (!Array.isArray(q.image) || !q.image[idx]) return "";
   return `<span class="opt-image"><img src="${q.image[idx]}" alt="" loading="lazy"></span>`;
 }
-// Options rendered with four-image sets get a different layout class.
+// Questions with four images are shown using a different layout class.
 function optsLayoutClass(q) {
   return (state.group === "A" && Array.isArray(q.image)) ? " opts-grid" : "";
 }
@@ -66,7 +67,7 @@ function formatTime(sec) {
   return m + ":" + String(s).padStart(2, "0");
 }
 
-// Detect browser + device type automatically (no personal data).
+// This identifies browser + device type automatically (no additional personal data is collected)
 function getBrowserDevice() {
   const ua = navigator.userAgent;
   const mobile = /Mobi|Android|iPhone|iPad/i.test(ua);
@@ -78,7 +79,7 @@ function getBrowserDevice() {
   return browser + " / " + (mobile ? "mobile" : "desktop");
 }
 
-// Group assignment: auto-alternate via RPC; fall back to random if unavailable.
+// This is used for group assignment, it automatically alternates using RPC, while going to random if unavailable.
 async function assignGroup() {
   try {
     const { data, error } = await dbClient.rpc("assign_group");
@@ -90,7 +91,7 @@ async function assignGroup() {
   }
 }
 
-// ── PHASE: Welcome + GDPR consent ──
+// Phase ---> Welcome + GDPR consent
 function showConsent() {
   render(`
     <div class="screen">
@@ -145,7 +146,7 @@ function showConsent() {
   });
 }
 
-// ── PHASE: Age band ──
+// Phase ---> Age band 
 function showAgeScreening() {
   render(`
     <div class="screen">
@@ -163,8 +164,8 @@ function showAgeScreening() {
   });
 }
 
-// Age eligibility gate. Under-18 / over-30 are excluded and recorded. Eligible
-// participants get a participant row created and move to screening (group assigned later).
+// This is the age eligibility gate ---> Under 18 / Over 30 are excluded and recorded.
+// Eligible participants get a participant row and move on to screening (with group assignment occuring after screening).
 async function handleAge(band) {
   state.ageBand = band;
   const eligible = (band === "18–30");
@@ -183,10 +184,7 @@ async function handleAge(band) {
 
   render(`<div class="screen"><p>Setting up your session…</p></div>`);
 
-  // NOTE: the group is NOT assigned here. It is assigned only after the participant
-  // passes the prior-knowledge screening (see handleScreeningSubmit), so that people
-  // excluded at screening don't consume an alternation slot and the A/B groups stay
-  // balanced across participants who actually reach the study.
+  // NOTE: Groups are NOT assigned here. They are assigned only after the participant passes the prior knowledge screening (see handleScreeningSubmit).
   const id = await createParticipant({
     age_band: band,
     age_eligible: true,
