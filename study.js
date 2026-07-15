@@ -98,7 +98,7 @@ function showConsent() {
       <h1>Research Study: Learning from a Short Quiz</h1>
       <p>You are invited to take part in a research study conducted as part of a Bachelor
          thesis at IU International University of Applied Sciences. Please read the
-         following before deciding whether to take part. It takes around 10–15 minutes.</p>
+         following before deciding whether to take part. It takes around 10-15 minutes.</p>
 
       <h3>What the study involves</h3>
       <p>You will complete a short screening, spend a few minutes on a brief learning
@@ -154,7 +154,7 @@ function showAgeScreening() {
       <p>Please select your age group:</p>
       <div class="age-options">
         <button class="age-btn" data-band="Under 18">Under 18</button>
-        <button class="age-btn" data-band="18–30">18–30</button>
+        <button class="age-btn" data-band="18-30">18-30</button>
         <button class="age-btn" data-band="Over 30">Over 30</button>
       </div>
     </div>
@@ -168,7 +168,7 @@ function showAgeScreening() {
 // Eligible participants get a participant row and move on to screening (with group assignment occurring after screening).
 async function handleAge(band) {
   state.ageBand = band;
-  const eligible = (band === "18–30");
+  const eligible = (band === "18-30");
 
   if (!eligible) {
     await createParticipant({
@@ -480,7 +480,7 @@ async function finishQuiz() {
 function showExcluded(reason) {
   const msg = reason === "knowledge"
     ? "Based on your responses, you already know too many of the answers for this study, which focuses on material that is new to participants."
-    : "Unfortunately you are not eligible for this study, which is limited to participants aged 18–30.";
+    : "Unfortunately you are not eligible for this study, which is limited to participants aged 18-30.";
   render(`
     <div class="screen">
       <h2>Thank you for your interest</h2>
