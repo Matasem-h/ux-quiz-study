@@ -2,7 +2,7 @@
 
 All images are used in the **enhanced UI condition (Group A)** only. The minimal UI condition (Group B) shows no images. Images were selected so that no single image reveals the correct answer (see the study's image rule); questions where any image would reveal the answer, or where there is nothing meaningful to depict, are intentionally left text-only.
 
-Sources: [Unsplash](https://unsplash.com) (free to use, no attribution required) and[Wikimedia Commons](https://commons.wikimedia.org)(see each file page for its licence).
+Sources: [Unsplash](https://unsplash.com) (free to use, no attribution required) and [Wikimedia Commons](https://commons.wikimedia.org)(see each file page for its licence).
 
 ## Option changes made to allow a fair image set
 

@@ -6,7 +6,7 @@ Participants are randomly assigned to one of two groups that see the **same cont
 
 ## How it works
 
-The study runs as a single page with four phases:
+The study runs as a single page with five phases:
 
 1. **Consent** - GDPR information and agreement.
 2. **Age screening** - only the 18–30 band proceeds (age is asked as a band, not an exact age).
