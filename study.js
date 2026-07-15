@@ -4,7 +4,7 @@
 const app = document.getElementById("app");
 
 // LEARNING_SECONDS can be set to a low number (e.g., 5s) for testing, it MUST be 180s before launch.
-const LEARNING_SECONDS = 180;
+const LEARNING_SECONDS = 5;
 
 // All of the below fields are filled with data as phases progress.
 const state = {
@@ -126,7 +126,7 @@ function showConsent() {
 
       <p style="font-size:0.9rem;color:#555;">Data controller: Matasem Habibullah,
          IU International University of Applied Sciences. Questions:
-         <em>[your IU email here]</em>.</p>
+         <em>matasem.habibullah@iu-study.org</em>.</p>
 
       <label style="display:block;margin:18px 0;">
         <input type="checkbox" id="consentBox">
@@ -471,7 +471,7 @@ async function finishQuiz() {
     <div class="screen">
       <h2>Thank you &mdash; you're all done!</h2>
       <p>Your responses have been recorded. Thank you very much for taking part in this study.
-         You may now close this page.</p>
+         You may now close this page.</p> 
     </div>
   `);
 }
