@@ -127,9 +127,16 @@ function showConsent() {
          cannot be linked back to you, individual responses cannot be retrieved or
          deleted once submitted; you may withdraw before submitting by closing this page.</p>
 
-      <h3>Please answer on your own</h3>
-      <p>For the results to be meaningful, please answer without using the internet,
-         AI tools, or help from other people.</p>
+      <h3>Before you start</h3>
+      <p>For the results to be meaningful, please:</p>
+      <ul class="prestart">
+        <li>complete this study on a <strong>computer or laptop</strong>, not a phone
+            or tablet;</li>
+        <li>find a <strong>quiet place</strong> where you can concentrate without
+            being interrupted;</li>
+        <li>answer <strong>on your own</strong>, without using the internet, AI tools,
+            or help from other people.</li>
+      </ul>
 
       <p style="font-size:0.9rem;color:#555;">Data controller: Matasem Habibullah,
          IU International University of Applied Sciences. Questions:
