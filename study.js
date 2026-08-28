@@ -11,6 +11,9 @@ const state = {
   participantId: null,
   group: null,        // "A" or "B"
   ageBand: null,
+  gender: null,
+  education: null,
+  nationality: null,
   consentAt: null,
   knownCount: null,
   knownIds: [],
@@ -109,10 +112,14 @@ function showConsent() {
          without giving a reason and without any consequence.</p>
 
       <h3>What data is collected</h3>
-      <p>We collect only: your <strong>age group</strong> (not your exact age), your
-         answers and how long you take to answer, and basic technical information
-         (browser and device type). We do <strong>not</strong> collect your name, email,
-         or anything that identifies you personally. All responses are anonymous.</p>
+      <p>We collect only: your <strong>age group</strong> (not your exact age),
+         <strong>gender</strong>, <strong>highest level of education</strong>, and
+         <strong>nationality</strong>; your answers and how long you take to answer;
+         and basic technical information (browser and device type). These background
+         details are used only to describe the group of participants as a whole, and
+         are never used to identify anyone. We do <strong>not</strong> collect your
+         name, email, or anything that identifies you personally. All responses are
+         anonymous.</p>
 
       <h3>How your data is used</h3>
       <p>Your anonymous responses are stored securely and used only for this academic
@@ -147,20 +154,73 @@ function showConsent() {
 }
 
 // Pre-Screening ---> Age band 
+// Country list for the nationality dropdown. A fixed list is used instead of a
+// text box so every participant's answer is stored in exactly the same form
+// (free text would produce "Saudi", "KSA", "Saudi Arabia" as separate values).
+const COUNTRIES = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czechia","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Ivory Coast","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
+
+// Builds the <option> tags for a dropdown, with a disabled placeholder first.
+function options(list, placeholder) {
+  return `<option value="" disabled selected>${placeholder}</option>` +
+         list.map(v => `<option value="${v}">${v}</option>`).join("");
+}
+
+// ── PHASE: Demographics ──
+// Four required dropdowns. Only the age band decides eligibility; gender,
+// education, and nationality are recorded as variables and exclude nobody.
 function showAgeScreening() {
   render(`
     <div class="screen">
       <h2>Before we begin</h2>
-      <p>Please select your age group:</p>
-      <div class="age-options">
-        <button class="age-btn" data-band="Under 18">Under 18</button>
-        <button class="age-btn" data-band="18-30">18-30</button>
-        <button class="age-btn" data-band="Over 30">Over 30</button>
+      <p>Please answer these four questions about yourself. They are used only to
+         describe the group of participants as a whole.</p>
+
+      <div class="demo-field">
+        <label for="ageSel">Age group</label>
+        <select id="ageSel" class="demo-select">
+          ${options(["Under 18", "18-30", "Over 30"], "Select your age group")}
+        </select>
       </div>
+
+      <div class="demo-field">
+        <label for="genderSel">Gender</label>
+        <select id="genderSel" class="demo-select">
+          ${options(["Male", "Female"], "Select your gender")}
+        </select>
+      </div>
+
+      <div class="demo-field">
+        <label for="eduSel">Highest level of education</label>
+        <select id="eduSel" class="demo-select">
+          ${options(["High school diploma", "Currently studying for a Bachelor's",
+                     "Bachelor's degree", "Master's degree", "Doctorate"],
+                    "Select your education level")}
+        </select>
+      </div>
+
+      <div class="demo-field">
+        <label for="natSel">Nationality</label>
+        <select id="natSel" class="demo-select">
+          ${options(COUNTRIES, "Select your nationality")}
+        </select>
+      </div>
+
+      <button id="demoBtn" disabled>Continue</button>
     </div>
   `);
-  document.querySelectorAll(".age-btn").forEach(b => {
-    b.addEventListener("click", () => handleAge(b.dataset.band));
+
+  const selects = ["ageSel", "genderSel", "eduSel", "natSel"].map(id => document.getElementById(id));
+  const btn = document.getElementById("demoBtn");
+
+  // The Continue button unlocks only once all four have been answered.
+  const check = () => { btn.disabled = selects.some(sel => !sel.value); };
+  selects.forEach(sel => sel.addEventListener("change", check));
+
+  btn.addEventListener("click", () => {
+    state.gender      = selects[1].value;
+    state.education   = selects[2].value;
+    state.nationality = selects[3].value;
+    handleAge(selects[0].value);
   });
 }
 
@@ -174,6 +234,9 @@ async function handleAge(band) {
     await createParticipant({
       age_band: band,
       age_eligible: false,
+      gender: state.gender,
+      education_level: state.education,
+      nationality: state.nationality,
       consent_given: true,
       consent_timestamp: state.consentAt,
       status: "screened-out-age"
@@ -188,6 +251,9 @@ async function handleAge(band) {
   const id = await createParticipant({
     age_band: band,
     age_eligible: true,
+    gender: state.gender,
+    education_level: state.education,
+    nationality: state.nationality,
     consent_given: true,
     consent_timestamp: state.consentAt,
     browser_device: getBrowserDevice(),
