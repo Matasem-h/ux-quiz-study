@@ -222,8 +222,12 @@ body[data-group="B"] .screen {
 }
 body[data-group="B"] .screen h2 { font-family: inherit; font-weight: bold; }
 
-/* Timer: plain text, not sticky, no progress bar. */
-body[data-group="B"] .learn-timerbar { position: static; background: none; padding: 0; margin: 0 0 6px; }
+/* Timer: plain text, no progress bar, but sticky so it stays visible while scrolling. */
+body[data-group="B"] .learn-timerbar {
+  position: sticky; top: 0; z-index: 5;
+  background: #ffffff;   /* opaque, so the questions don't show through as they scroll under it */
+  padding: 6px 0; margin: 0 0 6px;
+}
 body[data-group="B"] .learn-timerrow { display: inline; }
 body[data-group="B"] .learn-timer { font-weight: normal; }
 body[data-group="B"] .learn-timeprogress { display: none; }
