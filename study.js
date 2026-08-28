@@ -130,11 +130,11 @@ function showConsent() {
       <h3>Before you start</h3>
       <p>For the results to be meaningful, please:</p>
       <ul class="prestart">
-        <li>complete this study on a <strong>computer or laptop</strong>, not a phone
+        <li>Complete this study on a <strong>computer or laptop</strong>, not a phone
             or tablet;</li>
-        <li>find a <strong>quiet place</strong> where you can concentrate without
+        <li>Find a <strong>quiet place</strong> where you can concentrate without
             being interrupted;</li>
-        <li>answer <strong>on your own</strong>, without using the internet, AI tools,
+        <li>Answer <strong>on your own</strong>, without using the internet, AI tools,
             or help from other people.</li>
       </ul>
 
