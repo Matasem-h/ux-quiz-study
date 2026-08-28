@@ -523,8 +523,11 @@ async function handleQuizNext() {
     response_time_ms: responseMs
   });
 
-  // Progress marker (non-critical, as the answers table is the real trace).
-  updateParticipant(state.participantId, { last_reached_question: state.quizIndex + 1 });
+  // Progress marker, so an abandoned quiz records how far the participant got.
+  // This MUST be awaited: if these updates run in the background they can arrive
+  // AFTER finishQuiz() has written the final value and overwrite it, leaving a
+  // completed session showing a lower last_reached_question than it should.
+  await updateParticipant(state.participantId, { last_reached_question: state.quizIndex + 1 });
 
   state.quizIndex++;
   if (state.quizIndex < state.quizQuestions.length) {
