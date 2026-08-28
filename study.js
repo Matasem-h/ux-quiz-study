@@ -380,11 +380,11 @@ async function showLearning() {
       <h2>Learning phase</h2>
       <p>For each question, choose the answer you think is correct, then press
          <em>Check answer</em> to see the correct answer and a short explanation.
-         Try to answer before checking &mdash; it helps you remember. The quiz starts
+         Try to answer before checking - it helps you remember. The quiz starts
          automatically when the time is up.</p>
       <div class="learn-list">${itemsHtml}</div>
       <p class="learn-endnote">That's the end of the learning material. If you have time
-         left, feel free to scroll back up and review the answers &mdash; you will be
+         left, feel free to scroll back up and review the answers - you will be
          tested on them next.</p>
     </div>
   `, state.group);
@@ -535,18 +535,64 @@ async function handleQuizNext() {
 }
 
 async function finishQuiz() {
+  // The session is marked complete HERE, before the questionnaire is shown.
+  // The three questions that follow are optional extra qualitative data; skipping
+  // them does not affect whether a participant counts as completed.
   await updateParticipant(state.participantId, {
     status: "completed",
     last_reached_phase: "quiz",
     last_reached_question: state.quizQuestions.length
   });
+  showThankYou();
+}
+
+// ── Thank-you screen + optional questionnaire ──
+// Free-text, entirely optional. Answers are saved to the participant's existing row.
+function showThankYou() {
   render(`
     <div class="screen">
-      <h2>Thank you &mdash; you're all done!</h2>
-      <p>Your responses have been recorded. Thank you very much for taking part in this study.
-         You may now close this page.</p> 
+      <h2>Thank you - you're all done!</h2>
+      <p>Your responses have been recorded. Thank you very much for taking part in this study.</p>
+
+      <h3>Optional: how was it?</h3>
+      <p class="opt-note">Your answers above are already saved. These last three questions
+         are completely optional, but anything you write helps a great deal.</p>
+
+      <div class="q-field">
+        <label for="qLearn">How did you find the three-minute learning phase?</label>
+        <textarea id="qLearn" rows="3"></textarea>
+      </div>
+
+      <div class="q-field">
+        <label for="qQuiz">How did you feel while answering the quiz questions?</label>
+        <textarea id="qQuiz" rows="3"></textarea>
+      </div>
+
+      <div class="q-field">
+        <label for="qDesign">Was there anything about the design or layout you
+          particularly liked, or found difficult?</label>
+        <textarea id="qDesign" rows="3"></textarea>
+      </div>
+
+      <button id="qSubmit">Submit and finish</button>
+      <p id="qDone" class="opt-note" hidden>Thank you - your comments have been saved.
+         You may now close this page.</p>
     </div>
   `);
+
+  document.getElementById("qSubmit").addEventListener("click", async () => {
+    const btn = document.getElementById("qSubmit");
+    btn.disabled = true;
+    await updateParticipant(state.participantId, {
+      q_learning_phase:  document.getElementById("qLearn").value.trim()  || null,
+      q_quiz_feelings:   document.getElementById("qQuiz").value.trim()   || null,
+      q_design_feedback: document.getElementById("qDesign").value.trim() || null
+    });
+    // Replace the form with a short confirmation.
+    document.querySelectorAll(".q-field").forEach(f => f.remove());
+    btn.remove();
+    document.getElementById("qDone").hidden = false;
+  });
 }
 
 // Excluded screen (age or knowledge)

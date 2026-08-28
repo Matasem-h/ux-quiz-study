@@ -40,6 +40,12 @@ button:focus-visible { outline: 3px solid rgba(64,122,252,0.45); outline-offset:
 .demo-select { font: inherit; padding: 9px 10px; width: 100%; max-width: 380px; }
 #demoBtn { margin-top: 10px; }
 
+/* Optional post-quiz questionnaire on the thank-you screen. */
+.opt-note { font-size: 0.92rem; color: #555963; }
+.q-field { margin: 0 0 14px; }
+.q-field label { display: block; margin-bottom: 5px; font-size: 0.95rem; font-weight: 600; }
+.q-field textarea { font: inherit; width: 100%; max-width: 560px; padding: 8px 10px; resize: vertical; }
+
 /* Screening list ---> This isneutral, as it is shared by both groups. */
 .screen-q { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
 .q-text { margin: 0 0 6px; }
@@ -221,7 +227,7 @@ body[data-group="A"] .quiz-bar span { display: block; height: 100%; background: 
 @keyframes revealIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
 
 /* ==================================================
-   3. GROUP B skin  —  deliberately bare / unstyled.
+   3. GROUP B skin  -  deliberately bare / unstyled.
    ================================================== */
 body[data-group="B"] { background: #ffffff; }
 body[data-group="B"] .screen {
